@@ -1,11 +1,13 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function AuthPage() {
   const router = useRouter();
   const { user, login, register, loginWithGoogle } = useAuth();
+  const { t } = useLanguage();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -14,55 +16,67 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
 
   // Redirect if already logged in
-  React.useEffect(() => {
-    if (user) router.push('/dashboard');
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard');
+      router.refresh(); // Ensure context is fresh
+    }
   }, [user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
     setError('');
     setLoading(true);
 
-    if (mode === 'login') {
-      const result = await login(email, password);
-      if (result.success) {
-        router.push('/dashboard');
+    try {
+      if (mode === 'login') {
+        const result = await login(email, password);
+        if (result.success) {
+          router.replace('/dashboard');
+        } else {
+          setError(result.error || t('loginFailed') || 'فشل تسجيل الدخول');
+          setLoading(false);
+        }
       } else {
-        setError(result.error || 'Login failed');
+        if (!name.trim()) {
+          setError(t('nameRequired') || 'الاسم مطلوب');
+          setLoading(false);
+          return;
+        }
+        if (password.length < 6) {
+          setError(t('passwordShort') || 'كلمة المرور يجب أن تكون ٦ أحرف على الأقل');
+          setLoading(false);
+          return;
+        }
+        const result = await register(name, email, password);
+        if (result.success) {
+          router.replace('/dashboard');
+        } else {
+          setError(result.error || t('registrationFailed') || 'فشل إنشاء الحساب');
+          setLoading(false);
+        }
       }
-    } else {
-      if (!name.trim()) {
-        setError('Name is required');
-        setLoading(false);
-        return;
-      }
-      if (password.length < 6) {
-        setError('Password must be at least 6 characters');
-        setLoading(false);
-        return;
-      }
-      const result = await register(name, email, password);
-      if (result.success) {
-        router.push('/dashboard');
-      } else {
-        setError(result.error || 'Registration failed');
-      }
+    } catch (err: any) {
+      setError(err.message);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleGoogleLogin = async () => {
+    if (loading) return;
     setError('');
     setLoading(true);
     try {
       const result = await loginWithGoogle();
       if (result.success) {
-        if (!result.isRedirect) {
-          router.push('/dashboard');
+        if (result.isRedirect) {
+          // System handles redirect
+        } else {
+          router.replace('/dashboard');
         }
-        // If redirecting, we don't call setLoading(false) to keep the spinner while browser redirects
       } else {
-        setError(result.error || 'Google login failed');
+        setError(result.error || t('googleLoginFailed') || 'فشل تسجيل الدخول بقوقل');
         setLoading(false);
       }
     } catch (err: any) {
@@ -80,10 +94,10 @@ export default function AuthPage() {
             <span className="text-white font-bold text-2xl font-arabic">ح</span>
           </div>
           <h1 className="text-2xl font-bold font-display">
-            {mode === 'login' ? 'Welcome Back' : 'Join HifzaPro'}
+            {mode === 'login' ? t('welcomeBack') : t('joinHifzpro')}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-            {mode === 'login' ? 'Sign in to continue your journey' : 'Create an account to track your progress'}
+            {mode === 'login' ? t('signInContinue') : t('createAccount')}
           </p>
         </div>
 
@@ -93,19 +107,19 @@ export default function AuthPage() {
           <div className="flex gap-1 p-1 rounded-xl bg-gray-100 dark:bg-gray-800 mb-6">
             <button
               onClick={() => { setMode('login'); setError(''); }}
-              className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                mode === 'login' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-500'
+              className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all ${
+                mode === 'login' ? 'bg-white dark:bg-gray-700 shadow-sm text-emerald-600' : 'text-gray-500'
               }`}
             >
-              Sign In
+              {t('signIn')}
             </button>
             <button
               onClick={() => { setMode('register'); setError(''); }}
-              className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                mode === 'register' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-500'
+              className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all ${
+                mode === 'register' ? 'bg-white dark:bg-gray-700 shadow-sm text-emerald-600' : 'text-gray-500'
               }`}
             >
-              Sign Up
+              {t('signUp')}
             </button>
           </div>
 
@@ -118,30 +132,30 @@ export default function AuthPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === 'register' && (
               <div>
-                <label className="block text-sm font-medium mb-1.5">Full Name</label>
+                <label className="block text-sm font-medium mb-1.5">{t('fullName')}</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your name"
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                  placeholder={t('fullName')}
+                  className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all text-right"
                   required
                 />
               </div>
             )}
             <div>
-              <label className="block text-sm font-medium mb-1.5">Email Address</label>
+              <label className="block text-sm font-medium mb-1.5">{t('email')}</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder="email@example.com"
                 className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5">Password</label>
+              <label className="block text-sm font-medium mb-1.5">{t('password')}</label>
               <input
                 type="password"
                 value={password}
@@ -156,21 +170,21 @@ export default function AuthPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl gradient-primary text-white font-semibold hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-4 rounded-xl gradient-primary text-white font-semibold hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
                   <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Processing...
+                  ...
                 </span>
-              ) : mode === 'login' ? 'Sign In' : 'Create Account'}
+              ) : mode === 'login' ? t('signIn') : t('signUp')}
             </button>
           </form>
 
-          <div className="mt-6 flex items-center justify-between">
-            <span className="w-1/5 border-b border-gray-200 dark:border-gray-700 lg:w-1/4"></span>
-            <span className="text-xs text-center text-gray-500 uppercase">or sign in with</span>
-            <span className="w-1/5 border-b border-gray-200 dark:border-gray-700 lg:w-1/4"></span>
+          <div className="mt-8 flex items-center justify-between">
+            <span className="w-1/4 border-b border-gray-200 dark:border-gray-700"></span>
+            <span className="text-xs text-center text-gray-500 uppercase">{t('orSignInWith') || 'أو سجل عبر'}</span>
+            <span className="w-1/4 border-b border-gray-200 dark:border-gray-700"></span>
           </div>
 
           <div className="mt-4">
@@ -189,8 +203,8 @@ export default function AuthPage() {
             </button>
           </div>
 
-          <p className="text-center text-xs text-gray-500 dark:text-gray-400 mt-6">
-            By signing in, you agree to learn and grow in faith 🌟
+          <p className="text-center text-xs text-gray-500 dark:text-gray-400 mt-8">
+            {t('builtForUmmah')} 🌟
           </p>
         </div>
       </div>
