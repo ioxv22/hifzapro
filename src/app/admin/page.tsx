@@ -9,7 +9,9 @@ export default function AdminPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'stats' | 'users' | 'content'>('stats');
   const [users, setUsersList] = useState<ReturnType<typeof getUsers>>([]);
+  const [allProgress, setAllProgress] = useState<Record<string, any>>({});
   const [content, setContent] = useState<CustomContent>({ duas: [], hadiths: [], quizzes: [] });
+  const [dataLoading, setDataLoading] = useState(false);
 
   // Content form states
   const [duaForm, setDuaForm] = useState({ title: '', arabic: '', english: '', reference: '' });
@@ -19,14 +21,47 @@ export default function AdminPage() {
   useEffect(() => {
     if (!authLoading && (!user || user.role !== 'admin')) {
       router.push('/');
+      return;
     }
-    if (user) {
-      setUsersList(getUsers());
-      setContent(getCustomContent());
+    
+    if (user && user.role === 'admin') {
+      const fetchFirebaseData = async () => {
+        setDataLoading(true);
+        try {
+          const { collection, getDocs, doc, getDoc } = await import('firebase/firestore');
+          const { db } = await import('@/lib/firebase');
+          
+          // Users
+          const usersSnap = await getDocs(collection(db, 'users'));
+          const fetchedUsers = usersSnap.docs.map(d => d.data() as ReturnType<typeof getUsers>[0]);
+          setUsersList(fetchedUsers.length > 0 ? fetchedUsers : getUsers());
+          
+          // Progress mapping
+          const progSnap = await getDocs(collection(db, 'progress'));
+          const progMap: Record<string, any> = {};
+          progSnap.docs.forEach(d => { progMap[d.id] = d.data(); });
+          setAllProgress(progMap);
+          
+          // Content
+          const contentDoc = await getDoc(doc(db, 'system', 'custom_content'));
+          if (contentDoc.exists()) {
+             setContent(contentDoc.data() as CustomContent);
+          } else {
+             setContent(getCustomContent());
+          }
+        } catch (e) {
+          console.error("Failed to fetch admin data from Firebase:", e);
+          setUsersList(getUsers());
+          setContent(getCustomContent());
+        }
+        setDataLoading(false);
+      };
+      
+      fetchFirebaseData();
     }
   }, [user, authLoading, router]);
 
-  if (authLoading || !user || user.role !== 'admin') {
+  if (authLoading || dataLoading || !user || user.role !== 'admin') {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="w-8 h-8 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
@@ -35,16 +70,17 @@ export default function AdminPage() {
   }
 
   const totalDhikr = users.reduce((total, u) => {
-    const p = getProgress(u.id);
-    return total + Object.values(p.dhikrCount).reduce((a, b) => a + b, 0);
+    const p = allProgress[u.id] || getProgress(u.id);
+    return total + Object.values(p.dhikrCount as Record<string, number>).reduce((a, b) => a + b, 0);
   }, 0);
 
   const totalQuizzes = users.reduce((total, u) => {
-    return total + getProgress(u.id).quizScores.length;
+    const p = allProgress[u.id] || getProgress(u.id);
+    return total + (p.quizScores ? p.quizScores.length : 0);
   }, 0);
 
   const activeToday = users.filter(u => {
-    const p = getProgress(u.id);
+    const p = allProgress[u.id] || getProgress(u.id);
     return p.lastActiveDate === new Date().toISOString().split('T')[0];
   }).length;
 
@@ -81,11 +117,19 @@ export default function AdminPage() {
     setQuizForm({ question: '', option1: '', option2: '', option3: '', option4: '', correct: 0, category: 'General' });
   };
 
-  const deleteUser = (userId: string) => {
-    if (userId === user.id) return;
+  const deleteUser = async (userId: string) => {
+    if (userId === user?.id) return;
     const updated = users.filter(u => u.id !== userId);
     setUsersList(updated);
     saveUsers(updated);
+    try {
+      const { doc, deleteDoc } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
+      await deleteDoc(doc(db, 'users', userId));
+      await deleteDoc(doc(db, 'progress', userId));
+    } catch(err) {
+      console.error("Failed to delete from Firestore:", err);
+    }
   };
 
   const deleteContent = (type: 'duas' | 'hadiths' | 'quizzes', id: string) => {
@@ -176,8 +220,8 @@ export default function AdminPage() {
                 </thead>
                 <tbody>
                   {users.map(u => {
-                    const p = getProgress(u.id);
-                    const dhikr = Object.values(p.dhikrCount).reduce((a, b) => a + b, 0);
+                    const p = allProgress[u.id] || getProgress(u.id);
+                    const dhikr = Object.values(p.dhikrCount as Record<string, number>).reduce((a, b) => a + b, 0);
                     return (
                       <tr key={u.id} className="border-b border-gray-100 dark:border-gray-800">
                         <td className="py-3 px-4">
@@ -209,33 +253,56 @@ export default function AdminPage() {
       {activeTab === 'users' && (
         <div className="glass-card p-6">
           <h3 className="font-bold text-lg mb-4">Manage Users ({users.length})</h3>
-          <div className="space-y-3">
-            {users.map(u => (
-              <div key={u.id} className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-white font-bold">
-                    {u.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="font-medium">{u.name}</p>
-                    <p className="text-xs text-gray-500">{u.email}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${u.role === 'admin' ? 'bg-amber-500/10 text-amber-500' : 'bg-gray-200 dark:bg-gray-700 text-gray-500'}`}>
-                    {u.role}
-                  </span>
-                  {u.id !== user.id && (
-                    <button
-                      onClick={() => deleteUser(u.id)}
-                      className="px-3 py-1.5 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 text-xs font-medium hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
-                    >
-                      Delete
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="text-left text-sm text-gray-500">
+                  <th className="p-4">User</th>
+                  <th className="p-4">Role</th>
+                  <th className="p-4">Streak</th>
+                  <th className="p-4">Last Active</th>
+                  <th className="p-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map(u => {
+                  const p = allProgress[u.id] || getProgress(u.id);
+                  return (
+                    <tr key={u.id} className="border-t border-gray-100 dark:border-gray-800">
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-white font-bold shrink-0">
+                            {u.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <div className="font-medium">{u.name}</div>
+                            <div className="text-sm text-gray-500">{u.email}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          u.role === 'admin' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-600' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
+                        }`}>
+                          {u.role.toUpperCase()}
+                        </span>
+                      </td>
+                      <td className="p-4 font-medium">{p.streak} {p.streak >= 3 ? '🔥' : ''}</td>
+                      <td className="p-4 text-sm text-gray-500">{new Date(p.lastActiveDate).toLocaleDateString()}</td>
+                      <td className="p-4">
+                        <button
+                          onClick={() => deleteUser(u.id)}
+                          disabled={u.role === 'admin'}
+                          className="text-red-500 hover:text-red-600 disabled:opacity-30 disabled:cursor-not-allowed text-sm font-medium"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
