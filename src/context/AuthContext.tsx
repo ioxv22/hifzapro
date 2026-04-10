@@ -81,7 +81,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    // Safety timeout to prevent infinite loading
+    const loadTimeout = setTimeout(() => {
+      setLoading(false);
+    }, 8000);
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      clearTimeout(loadTimeout);
       try {
         if (firebaseUser) {
           await syncUser(firebaseUser);
@@ -136,7 +142,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     trackVisitor();
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      clearTimeout(loadTimeout);
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
