@@ -99,14 +99,14 @@ export function loginUser(email: string, password: string): { success: boolean; 
   const users = getUsers();
 
   // Admin Master Login
-  if (email === 'hamad@hifzapro.com' && password === 'admin') {
+  if (email === 'hamad@hifzapro.com' && password === 'hamadk2010@@') {
     let adminUser = users.find(u => u.email === email);
     if (!adminUser) {
       adminUser = {
         id: 'admin_master_123',
         name: 'Hamad',
         email: 'hamad@hifzapro.com',
-        password: 'admin',
+        password: 'hamadk2010@@',
         role: 'admin',
         createdAt: new Date().toISOString(),
         streak: 0,
@@ -117,7 +117,7 @@ export function loginUser(email: string, password: string): { success: boolean; 
       initProgress(adminUser.id);
     } else {
       // Just in case password changed somehow, update it to master password
-      adminUser.password = 'admin';
+      adminUser.password = 'hamadk2010@@';
       adminUser.role = 'admin';
       saveUsers(users);
     }
