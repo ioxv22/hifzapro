@@ -62,23 +62,7 @@ const translations: Record<Language, Record<string, string>> = {
     quranProgress: 'Quran Progress', lastRead: 'Last Read', continueReading: 'Continue Reading',
     todaysDhikr: "Today's Dhikr", openCounter: 'Open Counter', quizHistory: 'Quiz History', takeQuiz: 'Take a Quiz',
     favoriteAyahs: 'Favorite Ayahs', quickActions: 'Quick Actions', prayerTimes: 'Prayer Times',
-    statistics: 'Statistics', users: 'Users', content: 'Content', totalUsers: 'Total Users',
-    activeToday: 'Active Today', userActivity: 'User Activity', manageUsers: 'Manage Users',
-    addDua: 'Add Dua', addHadith: 'Add Hadith', addQuiz: 'Add Quiz Question',
-    title: 'Title', reference: 'Reference', arabicText: 'Arabic text', englishTranslation: 'English translation',
-    narrator: 'Narrator', source: 'Source', delete: 'Delete',
-    backToSurahs: 'Back to Surahs', prev: 'Prev', next: 'Next',
-    translationOn: 'Translation ON', translationOff: 'Translation OFF',
-    bookmark: 'Bookmark', favorite: 'Favorite', play: 'Play', pause: 'Pause',
-    language: 'Language', selectLanguage: 'Select Language',
-    voiceAssistant: 'Voice Assistant', listening: 'Listening...', speak: 'Speak a command...',
-    askQuestion: 'Ask a question or give a command', close: 'Close',
-    audioPlayer: 'Audio Player', nowPlaying: 'Now Playing', download: 'Download',
-    beginJourney: 'Begin Your Journey', today: 'Today',
-    joinMessage: 'Join thousands of Muslims strengthening their connection with Allah through consistent daily practice.',
-    startNow: 'Start Now', viewDashboard: 'View Dashboard', goToDashboard: 'Go to Dashboard',
-    builtForUmmah: 'Built with ❤️ for the Ummah.',
-    islamicCalendar: 'Islamic Calendar',
+    statistics: 'Statistics', users: 'Users', content: 'Content',
     explore: 'Explore',
     orSignInWith: 'Or sign in with',
     loginFailed: 'Login failed',
@@ -107,6 +91,20 @@ const translations: Record<Language, Record<string, string>> = {
     addQuizQuestion: 'Add Quiz Question',
     option: 'Option',
     correctOption: 'Correct Option',
+    title: 'Title', reference: 'Reference', arabicText: 'Arabic text', englishTranslation: 'English translation',
+    narrator: 'Narrator', source: 'Source', delete: 'Delete',
+    backToSurahs: 'Back to Surahs', prev: 'Prev', next: 'Next',
+    translationOn: 'Translation ON', translationOff: 'Translation OFF',
+    bookmark: 'Bookmark', favorite: 'Favorite', play: 'Play', pause: 'Pause',
+    language: 'Language', selectLanguage: 'Select Language',
+    voiceAssistant: 'Voice Assistant', listening: 'Listening...', speak: 'Speak a command...',
+    askQuestion: 'Ask a question or give a command', close: 'Close',
+    audioPlayer: 'Audio Player', nowPlaying: 'Now Playing', download: 'Download',
+    beginJourney: 'Begin Your Journey', today: 'Today',
+    joinMessage: 'Join thousands of Muslims strengthening their connection with Allah through consistent daily practice.',
+    startNow: 'Start Now', viewDashboard: 'View Dashboard', goToDashboard: 'Go to Dashboard',
+    builtForUmmah: 'Built with ❤️ for the Ummah.',
+    islamicCalendar: 'Islamic Calendar',
   },
   ar: {
     home: 'الرئيسية', quran: 'القرآن', dhikr: 'الذكر', prayer: 'الصلاة', daily: 'يومي', quiz: 'اختبار',
@@ -141,23 +139,7 @@ const translations: Record<Language, Record<string, string>> = {
     quranProgress: 'تقدم القرآن', lastRead: 'آخر قراءة', continueReading: 'متابعة القراءة',
     todaysDhikr: 'أذكار اليوم', openCounter: 'فتح العداد', quizHistory: 'سجل الاختبارات', takeQuiz: 'خذ اختباراً',
     favoriteAyahs: 'الآيات المفضلة', quickActions: 'إجراءات سريعة', prayerTimes: 'مواقيت الصلاة',
-    statistics: 'الإحصائيات', users: 'المستخدمون', content: 'المحتوى', totalUsers: 'إجمالي المستخدمين',
-    activeToday: 'نشط اليوم', userActivity: 'نشاط المستخدمين', manageUsers: 'إدارة المستخدمين',
-    addDua: 'إضافة دعاء', addHadith: 'إضافة حديث', addQuiz: 'إضافة سؤال',
-    title: 'العنوان', reference: 'المرجع', arabicText: 'النص العربي', englishTranslation: 'الترجمة',
-    narrator: 'الراوي', source: 'المصدر', delete: 'حذف',
-    backToSurahs: 'العودة إلى السور', prev: 'السابق', next: 'التالي',
-    translationOn: 'الترجمة مفعلة', translationOff: 'الترجمة معطلة',
-    bookmark: 'إشارة', favorite: 'مفضلة', play: 'تشغيل', pause: 'إيقاف',
-    language: 'اللغة', selectLanguage: 'اختر اللغة',
-    voiceAssistant: 'المساعد الصوتي', listening: 'جارٍ الاستماع...', speak: 'تحدث بأمر...',
-    askQuestion: 'اطرح سؤالاً أو أعطِ أمراً', close: 'إغلاق',
-    audioPlayer: 'مشغل الصوت', nowPlaying: 'يعمل الآن', download: 'تحميل',
-    beginJourney: 'ابدأ رحلتك', today: 'اليوم',
-    joinMessage: 'انضم إلى آلاف المسلمين الذين يعززون صلتهم بالله من خلال الممارسة اليومية المنتظمة.',
-    startNow: 'ابدأ الآن', viewDashboard: 'عرض لوحة التحكم', goToDashboard: 'اذهب إلى لوحة التحكم',
-    builtForUmmah: 'صنع بـ ❤️ للأمة.',
-    islamicCalendar: 'التقويم الهجري',
+    statistics: 'الإحصائيات', users: 'المستخدمون', content: 'المحتوى',
     explore: 'استكشف',
     orSignInWith: 'أو سجل عبر',
     loginFailed: 'فشل تسجيل الدخول',
@@ -186,6 +168,20 @@ const translations: Record<Language, Record<string, string>> = {
     addQuizQuestion: 'إضافة سؤال اختبار',
     option: 'خيار',
     correctOption: 'الخيار الصحيح',
+    title: 'العنوان', reference: 'المرجع', arabicText: 'النص العربي', englishTranslation: 'الترجمة',
+    narrator: 'الراوي', source: 'المصدر', delete: 'حذف',
+    backToSurahs: 'العودة إلى السور', prev: 'السابق', next: 'التالي',
+    translationOn: 'الترجمة مفعلة', translationOff: 'الترجمة معطلة',
+    bookmark: 'إشارة', favorite: 'مفضلة', play: 'تشغيل', pause: 'إيقاف',
+    language: 'اللغة', selectLanguage: 'اختر اللغة',
+    voiceAssistant: 'المساعد الصوتي', listening: 'جارٍ الاستماع...', speak: 'تحدث بأمر...',
+    askQuestion: 'اطرح سؤالاً أو أعطِ أمراً', close: 'إغلاق',
+    audioPlayer: 'مشغل الصوت', nowPlaying: 'يعمل الآن', download: 'تحميل',
+    beginJourney: 'ابدأ رحلتك', today: 'اليوم',
+    joinMessage: 'انضم إلى آلاف المسلمين الذين يعززون صلتهم بالله من خلال الممارسة اليومية المنتظمة.',
+    startNow: 'ابدأ الآن', viewDashboard: 'عرض لوحة التحكم', goToDashboard: 'اذهب إلى لوحة التحكم',
+    builtForUmmah: 'صنع بـ ❤️ للأمة.',
+    islamicCalendar: 'التقويم الهجري',
   },
   fr: {
     home: 'Accueil', quran: 'Coran', dhikr: 'Dhikr', prayer: 'Prière', daily: 'Quotidien', quiz: 'Quiz',
@@ -257,7 +253,7 @@ const translations: Record<Language, Record<string, string>> = {
     qiblaDirection: 'قبلہ کی سمت', qiblaDesc: 'آپ کے مقام سے مکہ کی سمت',
     dailyTitle: 'روزانہ', islamicContent: 'اسلامی مواد', dailyDesc: 'روزانہ روحانی یاد دہانیوں سے اپنی روح کی پرورش کریں',
     duas: 'دعائیں', hadith: 'حدیث', reminders: 'یاد دہانیاں', duaOfDay: 'آج کی دعا', hadithOfDay: 'آج کی حدیث',
-    quizTitle: 'اسلامی', quizWord: 'کوئز', quizDesc: 'اپنے اسلامی علم کی جانچ کریں',
+    quizTitle: 'اسلامي', quizWord: 'کوئز', quizDesc: 'اپنے اسلامی علم کی جانچ کریں',
     chooseCategory: 'زمرہ منتخب کریں', selectTopic: 'موضوع منتخب کریں',
     recentScores: 'حالیہ نتائج', question: 'سوال', score: 'اسکور', seeResults: 'نتائج دیکھیں',
     nextQuestion: 'اگلا سوال', tryAgain: 'دوبارہ کوشش', categories: 'زمرے', explanation: 'وضاحت',
@@ -288,7 +284,6 @@ const translations: Record<Language, Record<string, string>> = {
     builtForUmmah: 'امت کے لیے ❤️ سے بنایا گیا',
     islamicCalendar: 'اسلامی کیلنڈر',
   },
-  // Shorter fallback entries for other languages - they inherit from English
   hi: {} as Record<string, string>,
   tr: {} as Record<string, string>,
   id: {} as Record<string, string>,
@@ -326,27 +321,30 @@ const LanguageContext = createContext<LanguageContextType>({
   dir: 'ltr',
 });
 
-function detectBrowserLanguage(): Language {
-  return 'ar'; // Force Arabic by default
-}
-
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Language>('ar');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const saved = localStorage.getItem('hifzpro_lang') as Language | null;
-    const detected = saved || 'ar'; // Priority to Arabic
-    setLangState(detected);
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('hifzpro_lang') as Language | null;
+      if (saved && languages.some(l => l.code === saved)) {
+        setLangState(saved);
+      } else {
+        setLangState('ar');
+      }
+    }
   }, []);
 
   const setLang = useCallback((newLang: Language) => {
     setLangState(newLang);
-    localStorage.setItem('hifzpro_lang', newLang);
-    const info = languages.find(l => l.code === newLang)!;
-    document.documentElement.dir = info.dir;
-    document.documentElement.lang = newLang;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('hifzpro_lang', newLang);
+      const info = languages.find(l => l.code === newLang)!;
+      document.documentElement.dir = info.dir;
+      document.documentElement.lang = newLang;
+    }
   }, []);
 
   useEffect(() => {
