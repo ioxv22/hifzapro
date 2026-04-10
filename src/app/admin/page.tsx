@@ -12,6 +12,7 @@ export default function AdminPage() {
   const [allProgress, setAllProgress] = useState<Record<string, any>>({});
   const [content, setContent] = useState<CustomContent>({ duas: [], hadiths: [], quizzes: [] });
   const [dataLoading, setDataLoading] = useState(false);
+  const [totalVisitors, setTotalVisitors] = useState(0);
 
   // Content form states
   const [duaForm, setDuaForm] = useState({ title: '', arabic: '', english: '', reference: '' });
@@ -48,6 +49,16 @@ export default function AdminPage() {
              setContent(contentDoc.data() as CustomContent);
           } else {
              setContent(getCustomContent());
+          }
+
+          // Stats (Visitors)
+          const statsSnap = await getDoc(doc(db, 'system', 'stats'));
+          if (statsSnap.exists()) {
+            setTotalVisitors(statsSnap.data().totalVisitors || 0);
+          } else {
+            // Fallback: count documents in visitors collection
+            const visitorsSnap = await getDocs(collection(db, 'visitors'));
+            setTotalVisitors(visitorsSnap.size);
           }
         } catch (e) {
           console.error("Failed to fetch admin data from Firebase:", e);
@@ -190,7 +201,12 @@ export default function AdminPage() {
             <div className="glass-card p-6">
               <div className="text-3xl mb-2">🟢</div>
               <p className="text-3xl font-bold">{activeToday}</p>
-              <p className="text-sm text-gray-500">Active Today</p>
+              <p className="text-sm text-gray-500">Active Users</p>
+            </div>
+            <div className="glass-card p-6">
+              <div className="text-3xl mb-2">✨</div>
+              <p className="text-3xl font-bold">{totalVisitors}</p>
+              <p className="text-sm text-gray-500">Guest Visits (Unique)</p>
             </div>
             <div className="glass-card p-6">
               <div className="text-3xl mb-2">📿</div>

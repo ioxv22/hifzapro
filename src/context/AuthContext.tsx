@@ -13,7 +13,7 @@ import {
   indexedDBLocalPersistence,
   User as FirebaseUser
 } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, increment, collection, setDoc as setDocFire } from 'firebase/firestore';
 import { User, setCurrentUser as setLocalUser, initProgress, logoutUser as localLogout } from '@/lib/store';
 
 interface AuthContextType {
@@ -110,6 +110,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setPersistence(auth, indexedDBLocalPersistence).catch(err => {
       console.error("Persistence error:", err);
     });
+
+    // Handle visitor tracking for stats
+    const trackVisitor = async () => {
+      const visitorId = localStorage.getItem('hifzpro_visitor_id') || crypto.randomUUID();
+      localStorage.setItem('hifzpro_visitor_id', visitorId);
+      
+      try {
+        const visitorRef = doc(db, 'visitors', visitorId);
+        const visitorDoc = await getDoc(visitorRef);
+        if (!visitorDoc.exists()) {
+          await setDoc(visitorRef, {
+            id: visitorId,
+            firstVisit: new Date().toISOString(),
+            lastVisit: new Date().toISOString(),
+            userAgent: navigator.userAgent
+          });
+          // Also increment global counter for fast access
+          const statsRef = doc(db, 'system', 'stats');
+          await setDoc(statsRef, { totalVisitors: increment(1) }, { merge: true });
+        } else {
+          await updateDoc(visitorRef, { lastVisit: new Date().toISOString() });
+        }
+      } catch (e) { console.warn("Visitor tracking failed", e); }
+    };
+    trackVisitor();
 
     return () => unsubscribe();
   }, []);
