@@ -54,13 +54,21 @@ export default function AuthPage() {
   const handleGoogleLogin = async () => {
     setError('');
     setLoading(true);
-    const result = await loginWithGoogle();
-    if (result.success) {
-      router.push('/dashboard');
-    } else {
-      setError(result.error || 'Google login failed');
+    try {
+      const result = await loginWithGoogle();
+      if (result.success) {
+        if (!result.isRedirect) {
+          router.push('/dashboard');
+        }
+        // If redirecting, we don't call setLoading(false) to keep the spinner while browser redirects
+      } else {
+        setError(result.error || 'Google login failed');
+        setLoading(false);
+      }
+    } catch (err: any) {
+      setError(err.message);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

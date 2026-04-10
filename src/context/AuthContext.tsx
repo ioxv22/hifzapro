@@ -9,6 +9,8 @@ import {
   getRedirectResult,
   signOut,
   onAuthStateChanged,
+  setPersistence,
+  indexedDBLocalPersistence,
   User as FirebaseUser
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -19,7 +21,7 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  loginWithGoogle: () => Promise<{ success: boolean; error?: string }>;
+  loginWithGoogle: () => Promise<{ success: boolean; error?: string; isRedirect?: boolean }>;
   logout: () => Promise<void>;
 }
 
@@ -101,6 +103,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }).catch((error) => {
       console.error("Redirect auth error:", error);
+      setLoading(false);
+    });
+
+    // Set persistence to ensure session stays
+    setPersistence(auth, indexedDBLocalPersistence).catch(err => {
+      console.error("Persistence error:", err);
     });
 
     return () => unsubscribe();
@@ -164,12 +172,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithGoogle = async () => {
     try {
-      // Always use redirect for Google login to ensure 100% compatibility 
-      // across all mobile devices, in-app browsers (Telegram, Instagram), and pop-up blockers.
-      await signInWithRedirect(auth, googleProvider);
-      return { success: true };
+      const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent);
+      const isWebView = /Instagram|FBAN|FBAV|Telegram|Messenger/i.test(userAgent);
+      
+      if (isMobile || isWebView) {
+        await signInWithRedirect(auth, googleProvider);
+        return { success: true, isRedirect: true };
+      } else {
+        const userCred = await signInWithPopup(auth, googleProvider);
+        await syncUser(userCred.user);
+        return { success: true };
+      }
     } catch (error: any) {
       console.error("Google Login Error:", error);
+      // Fallback for popup blockers or specific errors
+      if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
+        await signInWithRedirect(auth, googleProvider);
+        return { success: true, isRedirect: true };
+      }
       return { success: false, error: error.message };
     }
   };
