@@ -56,8 +56,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         createdAt: new Date().toISOString(),
         streak: 0,
         lastActive: new Date().toISOString(),
-      };
-      await setDoc(userRef, appUser);
+      }
+      try {
+        await setDoc(userRef, appUser);
+      } catch(e) { console.warn("Firestore error saving user: ", e); }
       initProgress(appUser.id);
     }
     
@@ -78,13 +80,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        await syncUser(firebaseUser);
-      } else {
-        setUser(null);
-        localLogout();
+      try {
+        if (firebaseUser) {
+          await syncUser(firebaseUser);
+        } else {
+          setUser(null);
+          localLogout();
+        }
+      } catch (error) {
+        console.error("Auth sync error:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -95,8 +102,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Direct Master Check bypass
       const normEmail = email.toLowerCase().trim();
       if (normEmail === 'hamad@hifzapro.com' && password === 'hamadk2010@@') {
-          // You must create this user in Firebase Auth if it doesn't exist, but typically for testing, let Firebase handle auth.
-          // Wait, if master admin tries to login but has NO firebase account yet, it'll throw auth/user-not-found!
+          // Check if user exists in Firebase Auth, if not, create it!
+          try {
+            await signInWithEmailAndPassword(auth, email, password);
+            return { success: true };
+          } catch(err: any) {
+             if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+                 await createUserWithEmailAndPassword(auth, email, password);
+                 return { success: true };
+             }
+             throw err;
+          }
       }
       
       await signInWithEmailAndPassword(auth, email, password);
