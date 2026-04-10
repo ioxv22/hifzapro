@@ -1,4 +1,6 @@
 // Local storage helper for persisting user data
+import { db } from './firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 export interface User {
   id: string;
@@ -183,6 +185,12 @@ export function saveProgress(userId: string, progress: UserProgress): void {
   const all = getItem<Record<string, UserProgress>>(STORAGE_KEYS.PROGRESS, {});
   all[userId] = progress;
   setItem(STORAGE_KEYS.PROGRESS, all);
+  
+  if (typeof window !== 'undefined') {
+    setDoc(doc(db, 'progress', userId), progress).catch((err) => {
+      console.warn("Failed to sync progress to cloud:", err);
+    });
+  }
 }
 
 // Theme
@@ -207,4 +215,7 @@ export function getCustomContent(): CustomContent {
 
 export function saveCustomContent(content: CustomContent): void {
   setItem(STORAGE_KEYS.CUSTOM_CONTENT, content);
+  if (typeof window !== 'undefined') {
+    setDoc(doc(db, 'system', 'custom_content'), content).catch(console.warn);
+  }
 }
