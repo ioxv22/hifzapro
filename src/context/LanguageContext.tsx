@@ -271,10 +271,7 @@ const LanguageContext = createContext<LanguageContextType>({
 });
 
 function detectBrowserLanguage(): Language {
-  if (typeof navigator === 'undefined') return 'ar';
-  const browserLang = navigator.language?.split('-')[0] || 'ar';
-  const supported = languages.find(l => l.code === browserLang);
-  return supported ? supported.code : 'ar';
+  return 'ar'; // Force Arabic by default
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
@@ -284,7 +281,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setMounted(true);
     const saved = localStorage.getItem('hifzpro_lang') as Language | null;
-    const detected = saved || detectBrowserLanguage();
+    const detected = saved || 'ar'; // Priority to Arabic
     setLangState(detected);
   }, []);
 
