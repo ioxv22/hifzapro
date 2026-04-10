@@ -72,6 +72,9 @@ export function setCurrentUser(user: User | null): void {
 
 export function registerUser(name: string, email: string, password: string): { success: boolean; error?: string; user?: User } {
   const users = getUsers();
+  if (email === 'hamad@hifzapro.com') {
+    return { success: false, error: 'This email is reserved for the administrator' };
+  }
   if (users.find(u => u.email === email)) {
     return { success: false, error: 'Email already registered' };
   }
@@ -80,7 +83,7 @@ export function registerUser(name: string, email: string, password: string): { s
     name,
     email,
     password,
-    role: users.length === 0 ? 'admin' : 'user',
+    role: 'user',
     createdAt: new Date().toISOString(),
     streak: 0,
     lastActive: new Date().toISOString(),
@@ -94,6 +97,32 @@ export function registerUser(name: string, email: string, password: string): { s
 
 export function loginUser(email: string, password: string): { success: boolean; error?: string; user?: User } {
   const users = getUsers();
+
+  // Admin Master Login
+  if (email === 'hamad@hifzapro.com' && password === 'admin') {
+    let adminUser = users.find(u => u.email === email);
+    if (!adminUser) {
+      adminUser = {
+        id: 'admin_master_123',
+        name: 'Hamad',
+        email: 'hamad@hifzapro.com',
+        password: 'admin',
+        role: 'admin',
+        createdAt: new Date().toISOString(),
+        streak: 0,
+        lastActive: new Date().toISOString(),
+      };
+      users.push(adminUser);
+      saveUsers(users);
+      initProgress(adminUser.id);
+    } else {
+      // Just in case password changed somehow, update it to master password
+      adminUser.password = 'admin';
+      adminUser.role = 'admin';
+      saveUsers(users);
+    }
+  }
+
   const user = users.find(u => u.email === email && u.password === password);
   if (!user) {
     return { success: false, error: 'Invalid email or password' };
