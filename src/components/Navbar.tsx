@@ -38,7 +38,7 @@ export default function Navbar() {
                 <span className="text-white font-bold text-lg">ح</span>
               </div>
               <span className="text-xl font-bold font-display">
-                <span className="text-gradient">Hifza</span>
+                <span className="text-gradient">حفظ_</span>
                 <span className="text-gradient-gold">Pro</span>
               </span>
             </Link>

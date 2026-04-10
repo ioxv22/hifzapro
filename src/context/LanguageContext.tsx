@@ -13,8 +13,8 @@ export interface LangInfo {
 }
 
 export const languages: LangInfo[] = [
-  { code: 'en', name: 'English', nativeName: 'English', dir: 'ltr', quranTranslation: 'en.sahih', flag: '🇬🇧' },
   { code: 'ar', name: 'Arabic', nativeName: 'العربية', dir: 'rtl', quranTranslation: 'ar.alafasy', flag: '🇸🇦' },
+  { code: 'en', name: 'English', nativeName: 'English', dir: 'ltr', quranTranslation: 'en.sahih', flag: '🇬🇧' },
   { code: 'fr', name: 'French', nativeName: 'Français', dir: 'ltr', quranTranslation: 'fr.hamidullah', flag: '🇫🇷' },
   { code: 'ur', name: 'Urdu', nativeName: 'اردو', dir: 'rtl', quranTranslation: 'ur.jalandhry', flag: '🇵🇰' },
   { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', dir: 'ltr', quranTranslation: 'hi.hindi', flag: '🇮🇳' },
@@ -79,6 +79,7 @@ const translations: Record<Language, Record<string, string>> = {
     startNow: 'Start Now', viewDashboard: 'View Dashboard', goToDashboard: 'Go to Dashboard',
     builtForUmmah: 'Built with ❤️ for the Ummah.',
     islamicCalendar: 'Islamic Calendar',
+    explore: 'Explore',
   },
   ar: {
     home: 'الرئيسية', quran: 'القرآن', dhikr: 'الذكر', prayer: 'الصلاة', daily: 'يومي', quiz: 'اختبار',
@@ -130,6 +131,7 @@ const translations: Record<Language, Record<string, string>> = {
     startNow: 'ابدأ الآن', viewDashboard: 'عرض لوحة التحكم', goToDashboard: 'اذهب إلى لوحة التحكم',
     builtForUmmah: 'صنع بـ ❤️ للأمة.',
     islamicCalendar: 'التقويم الهجري',
+    explore: 'استكشف',
   },
   fr: {
     home: 'Accueil', quran: 'Coran', dhikr: 'Dhikr', prayer: 'Prière', daily: 'Quotidien', quiz: 'Quiz',

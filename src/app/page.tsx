@@ -113,7 +113,7 @@ export default function HomePage() {
               <h3 className="text-xl font-bold mb-2 group-hover:text-emerald-500 transition-colors">{feature.title}</h3>
               <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">{feature.desc}</p>
               <div className="mt-4 flex items-center gap-2 text-emerald-500 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                Explore <span>→</span>
+                {t('explore')} <span>→</span>
               </div>
             </Link>
           ))}
@@ -185,7 +185,7 @@ export default function HomePage() {
                 <span className="text-white font-bold text-sm">ح</span>
               </div>
               <span className="font-bold font-display">
-                <span className="text-gradient">Hifza</span><span className="text-gradient-gold">Pro</span>
+                <span className="text-gradient">حفظ_</span><span className="text-gradient-gold">Pro</span>
               </span>
             </div>
             <div className="flex flex-col items-end gap-1 text-sm text-gray-500 dark:text-gray-400">
