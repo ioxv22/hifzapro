@@ -1,6 +1,6 @@
 'use client';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { auth, googleProvider, db } from '@/lib/firebase';
+import { auth, googleProvider, appleProvider, db } from '@/lib/firebase';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
@@ -18,6 +18,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   loginWithGoogle: () => Promise<{ success: boolean; error?: string }>;
+  loginWithApple: () => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
 }
 
@@ -27,6 +28,7 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => ({ success: false }),
   register: async () => ({ success: false }),
   loginWithGoogle: async () => ({ success: false }),
+  loginWithApple: async () => ({ success: false }),
   logout: async () => {},
 });
 
@@ -143,6 +145,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const loginWithApple = async () => {
+    try {
+      await signInWithPopup(auth, appleProvider);
+      return { success: true };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  };
+
   const logout = async () => {
     await signOut(auth);
     setUser(null);
@@ -150,7 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, loginWithGoogle, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, loginWithGoogle, loginWithApple, logout }}>
       {children}
     </AuthContext.Provider>
   );
