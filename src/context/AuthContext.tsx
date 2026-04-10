@@ -115,7 +115,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
       }
       
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCred = await signInWithEmailAndPassword(auth, email, password);
+      await syncUser(userCred.user);
       return { success: true };
     } catch (error: any) {
       return { success: false, error: error.message };
@@ -154,7 +155,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithGoogle = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      const userCred = await signInWithPopup(auth, googleProvider);
+      await syncUser(userCred.user);
       return { success: true };
     } catch (error: any) {
       return { success: false, error: error.message };
@@ -163,7 +165,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithApple = async () => {
     try {
-      await signInWithPopup(auth, appleProvider);
+      const userCred = await signInWithPopup(auth, appleProvider);
+      await syncUser(userCred.user);
       return { success: true };
     } catch (error: any) {
       return { success: false, error: error.message };
