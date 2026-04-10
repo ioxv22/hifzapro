@@ -69,7 +69,7 @@ export default function SurahPage() {
       progress.quranBookmarks.splice(exists, 1);
       setBookmarked(prev => { const n = new Set(prev); n.delete(ayahNumber); return n; });
     } else {
-      progress.quranBookmarks.push({ surah: surahNumber, ayah: ayahNumber, surahName: surahInfo?.englishName || '', date: new Date().toISOString() });
+      progress.quranBookmarks.push({ surah: surahNumber, ayah: ayahNumber, surahName: surahInfo?.name.replace('سورة ', '') || '', date: new Date().toISOString() });
       setBookmarked(prev => new Set(prev).add(ayahNumber));
     }
     saveProgress(user.id, progress);
@@ -117,7 +117,7 @@ export default function SurahPage() {
     const reciter = reciters.find(r => r.id === selectedReciter) || reciters[0];
     globalPlay({
       surahNumber,
-      surahName: surahInfo?.englishName || '',
+      surahName: surahInfo?.name.replace('سورة ', '') || '',
       ayahNumber,
       totalAyahs: surahInfo?.numberOfAyahs || 0,
       reciterId: selectedReciter,
@@ -163,9 +163,7 @@ export default function SurahPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-primary text-white font-bold text-xl mb-4 shadow-lg shadow-emerald-500/20">
             {surahInfo.number}
           </div>
-          <h1 className="font-arabic text-4xl md:text-5xl text-emerald-600 dark:text-emerald-400 mb-2">{surahInfo.name}</h1>
-          <h2 className="text-xl font-bold font-display mb-1">{surahInfo.englishName}</h2>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">{surahInfo.englishNameTranslation}</p>
+          <h1 className="font-arabic text-4xl md:text-5xl text-emerald-600 dark:text-emerald-400 mb-2">سورة {surahInfo.name.replace('سورة ', '')}</h1>
           <div className="flex items-center justify-center gap-3 mt-3 text-xs text-gray-500">
             <span className={`px-2 py-1 rounded-full ${surahInfo.revelationType === 'Meccan' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'}`}>
               {surahInfo.revelationType}
@@ -177,7 +175,7 @@ export default function SurahPage() {
             onClick={() => playSurahFromAyah(1)}
             className="mt-4 px-6 py-2.5 rounded-xl gradient-primary text-white text-sm font-medium hover:shadow-lg hover:shadow-emerald-500/25 transition-all inline-flex items-center gap-2"
           >
-            ▶ {t('play')} {surahInfo.englishName}
+            ▶ {t('play')} سورة {surahInfo.name.replace('سورة ', '')}
           </button>
         </div>
       </div>
@@ -297,12 +295,12 @@ export default function SurahPage() {
       <div className="flex items-center justify-between mt-8 mb-8">
         {surahNumber > 1 ? (
           <Link href={`/quran/${surahNumber - 1}`} className="px-6 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-            ← {surahs[surahNumber - 2]?.englishName}
+            ← سورة {surahs[surahNumber - 2]?.name.replace('سورة ', '')}
           </Link>
         ) : <div />}
         {surahNumber < 114 ? (
           <Link href={`/quran/${surahNumber + 1}`} className="px-6 py-3 rounded-xl gradient-primary text-white font-medium hover:shadow-lg transition-all">
-            {surahs[surahNumber]?.englishName} →
+            سورة {surahs[surahNumber]?.name.replace('سورة ', '')} →
           </Link>
         ) : <div />}
       </div>

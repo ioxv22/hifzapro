@@ -71,12 +71,11 @@ export default function QuranPage() {
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-1">
-                <h3 className="font-bold group-hover:text-emerald-500 transition-colors">{surah.englishName}</h3>
-                <span className="font-arabic text-emerald-500 text-lg">{surah.name}</span>
+                <h3 className="font-bold font-arabic text-emerald-600 dark:text-emerald-400 text-xl group-hover:text-emerald-500 transition-colors">
+                  سورة {surah.name.replace('سورة ', '')}
+                </h3>
               </div>
-              <div className="flex items-center gap-2 text-xs text-gray-500">
-                <span>{surah.englishNameTranslation}</span>
-                <span>•</span>
+              <div className="flex items-center gap-2 text-xs text-gray-500 mt-2">
                 <span>{surah.numberOfAyahs} {t('ayahs').toLowerCase()}</span>
               </div>
               <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${

@@ -99,7 +99,7 @@ export default function DashboardPage() {
           {lastReadSurah ? (
             <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10 mb-4">
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Last Read</p>
-              <p className="font-bold text-lg">{lastReadSurah.englishName} <span className="font-arabic text-emerald-500">{lastReadSurah.name}</span></p>
+              <p className="font-bold font-arabic text-xl text-emerald-600 dark:text-emerald-400">سورة {lastReadSurah.name.replace('سورة ', '')}</p>
               <p className="text-sm text-gray-500">Ayah {lastRead?.ayah}</p>
               <Link href={`/quran/${lastRead?.surah}`} className="inline-flex items-center gap-1 mt-3 px-4 py-2 rounded-lg gradient-primary text-white text-sm font-medium hover:shadow-lg transition-all">
                 Continue Reading →
@@ -120,7 +120,7 @@ export default function DashboardPage() {
                     href={`/quran/${b.surah}#ayah-${b.ayah}`}
                     className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm"
                   >
-                    <span>{b.surahName} - Ayah {b.ayah}</span>
+                    <span className="font-arabic">سورة {b.surahName.replace('سورة ', '')} - آية {b.ayah}</span>
                     <span className="text-gray-400">🔖</span>
                   </Link>
                 ))}
@@ -187,7 +187,7 @@ export default function DashboardPage() {
               {progress.favoriteAyahs.slice(-5).reverse().map((f, i) => (
                 <div key={i} className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                   <p className="font-arabic text-sm text-emerald-600 dark:text-emerald-400 text-right mb-1" style={{ lineHeight: 2 }}>{f.text.slice(0, 80)}...</p>
-                  <p className="text-xs text-gray-500">{surahs[f.surah - 1]?.englishName} : {f.ayah}</p>
+                  <p className="text-xs text-gray-500 font-arabic">سورة {surahs[f.surah - 1]?.name.replace('سورة ', '')} : {f.ayah}</p>
                 </div>
               ))}
             </div>

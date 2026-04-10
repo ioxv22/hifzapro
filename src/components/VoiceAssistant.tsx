@@ -145,7 +145,7 @@ export default function VoiceAssistant() {
         queryNorm.includes(normalize(s.englishName))
       );
       if (found) {
-        const response = `Opening Surah ${found.englishName} (${found.name})... Starting recitation.`;
+        const response = `Opening Surah ${found.name.replace('سورة ', '')}... Starting recitation.`;
         addMessage('assistant', response);
         speak(response);
         router.push(`/quran/${found.number}`);
@@ -154,7 +154,7 @@ export default function VoiceAssistant() {
         setTimeout(() => {
           play({
             surahNumber: found.number,
-            surahName: found.englishName,
+            surahName: found.name.replace('سورة ', ''),
             ayahNumber: 1,
             totalAyahs: found.numberOfAyahs,
             reciterId: 'ar.alafasy',
@@ -173,7 +173,7 @@ export default function VoiceAssistant() {
         return queryNorm.includes(nameNorm) && nameNorm.length > 2;
       });
       if (found && (lower.includes('surah') || lower.includes('read') || lower.includes('play'))) {
-        const response = `Opening Surah ${found.englishName} (${found.name})...`;
+        const response = `Opening Surah ${found.name.replace('سورة ', '')}...`;
         addMessage('assistant', response);
         speak(response);
         router.push(`/quran/${found.number}`);
