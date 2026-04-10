@@ -90,7 +90,13 @@ export default function AdminPage() {
 
   const deleteContent = (type: 'duas' | 'hadiths' | 'quizzes', id: string) => {
     const newContent = { ...content };
-    newContent[type] = newContent[type].filter((item: { id: string }) => item.id !== id);
+    if (type === 'duas') {
+      newContent.duas = newContent.duas.filter(item => item.id !== id);
+    } else if (type === 'hadiths') {
+      newContent.hadiths = newContent.hadiths.filter(item => item.id !== id);
+    } else if (type === 'quizzes') {
+      newContent.quizzes = newContent.quizzes.filter(item => item.id !== id);
+    }
     setContent(newContent);
     saveCustomContent(newContent);
   };
