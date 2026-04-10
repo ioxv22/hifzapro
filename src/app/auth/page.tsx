@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function AuthPage() {
   const router = useRouter();
-  const { user, login, register, loginWithGoogle, loginWithApple } = useAuth();
+  const { user, login, register, loginWithGoogle } = useAuth();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -59,18 +59,6 @@ export default function AuthPage() {
       router.push('/dashboard');
     } else {
       setError(result.error || 'Google login failed');
-    }
-    setLoading(false);
-  };
-
-  const handleAppleLogin = async () => {
-    setError('');
-    setLoading(true);
-    const result = await loginWithApple();
-    if (result.success) {
-      router.push('/dashboard');
-    } else {
-      setError(result.error || 'Apple login failed');
     }
     setLoading(false);
   };
@@ -177,11 +165,11 @@ export default function AuthPage() {
             <span className="w-1/5 border-b border-gray-200 dark:border-gray-700 lg:w-1/4"></span>
           </div>
 
-          <div className="flex gap-3 mt-4">
+          <div className="mt-4">
             <button
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all text-sm font-medium disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all text-sm font-medium disabled:opacity-50"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -190,17 +178,6 @@ export default function AuthPage() {
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
               </svg>
               Google
-            </button>
-
-            <button
-              onClick={handleAppleLogin}
-              disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-black text-white hover:bg-gray-900 transition-all text-sm font-medium disabled:opacity-50"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M16.365 21.43c-1.353.94-2.715 1.88-4.133 1.88-1.385 0-2.825-.92-4.101-1.88-1.571-1.161-4.708-5.185-4.708-9.871 0-5.122 3.193-7.854 6.273-7.854 1.48 0 2.89.87 4.101.87 1.178 0 2.652-.87 4.228-.87 3.518 0 5.86 2.628 5.86 2.628-.158.079-3.485 2.007-3.485 5.892 0 4.148 3.58 5.539 3.58 5.539-1.025 2.502-2.906 5.253-4.482 6.452-.392.296-.75.568-1.04.811zM11.91 5.485c-.179-2.227 1.66-4.321 3.861-4.484.28.328 3.619 4.351-3.861 4.484z" />
-              </svg>
-              Apple
             </button>
           </div>
 
