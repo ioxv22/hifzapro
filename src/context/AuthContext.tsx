@@ -5,6 +5,8 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signInWithPopup, 
+  signInWithRedirect,
+  getRedirectResult,
   signOut,
   onAuthStateChanged,
   User as FirebaseUser
@@ -92,6 +94,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     });
 
+    // Handle redirect results (e.g. after mobile Google login)
+    getRedirectResult(auth).then(async (result) => {
+      if (result?.user) {
+        await syncUser(result.user);
+      }
+    }).catch((error) => {
+      console.error("Redirect auth error:", error);
+    });
+
     return () => unsubscribe();
   }, []);
 
@@ -153,10 +164,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithGoogle = async () => {
     try {
-      const userCred = await signInWithPopup(auth, googleProvider);
-      await syncUser(userCred.user);
-      return { success: true };
+      // Use redirect for mobile devices or if being opened in an in-app browser (WebView)
+      // This solves the 'Bluetooth/Security Key' prompt issue which happens when popups are blocked or untrusted.
+      const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent);
+      const isInstagram = /Instagram/i.test(userAgent);
+      const isFacebook = /FBAN|FBAV/i.test(userAgent);
+      
+      if (isMobile || isInstagram || isFacebook) {
+        await signInWithRedirect(auth, googleProvider);
+        return { success: true };
+      } else {
+        const userCred = await signInWithPopup(auth, googleProvider);
+        await syncUser(userCred.user);
+        return { success: true };
+      }
     } catch (error: any) {
+      console.error("Google Login Error:", error);
+      // Fallback for popup blockers
+      if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
+        await signInWithRedirect(auth, googleProvider);
+        return { success: true };
+      }
       return { success: false, error: error.message };
     }
   };
