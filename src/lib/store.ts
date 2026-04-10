@@ -72,16 +72,18 @@ export function setCurrentUser(user: User | null): void {
 
 export function registerUser(name: string, email: string, password: string): { success: boolean; error?: string; user?: User } {
   const users = getUsers();
-  if (email === 'hamad@hifzapro.com') {
+  const normalizedEmail = email.toLowerCase().trim();
+  
+  if (normalizedEmail === 'hamad@hifzapro.com') {
     return { success: false, error: 'This email is reserved for the administrator' };
   }
-  if (users.find(u => u.email === email)) {
+  if (users.find(u => u.email.toLowerCase().trim() === normalizedEmail)) {
     return { success: false, error: 'Email already registered' };
   }
   const user: User = {
     id: crypto.randomUUID(),
     name,
-    email,
+    email: normalizedEmail,
     password,
     role: 'user',
     createdAt: new Date().toISOString(),
@@ -97,10 +99,11 @@ export function registerUser(name: string, email: string, password: string): { s
 
 export function loginUser(email: string, password: string): { success: boolean; error?: string; user?: User } {
   const users = getUsers();
+  const normalizedEmail = email.toLowerCase().trim();
 
   // Admin Master Login
-  if (email === 'hamad@hifzapro.com' && password === 'hamadk2010@@') {
-    let adminUser = users.find(u => u.email === email);
+  if (normalizedEmail === 'hamad@hifzapro.com' && password === 'hamadk2010@@') {
+    let adminUser = users.find(u => u.email.toLowerCase().trim() === normalizedEmail);
     if (!adminUser) {
       adminUser = {
         id: 'admin_master_123',
@@ -123,7 +126,7 @@ export function loginUser(email: string, password: string): { success: boolean; 
     }
   }
 
-  const user = users.find(u => u.email === email && u.password === password);
+  const user = users.find(u => u.email.toLowerCase().trim() === normalizedEmail && u.password === password);
   if (!user) {
     return { success: false, error: 'Invalid email or password' };
   }
