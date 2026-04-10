@@ -13,7 +13,7 @@ export interface LangInfo {
 }
 
 export const languages: LangInfo[] = [
-  { code: 'ar', name: 'Arabic', nativeName: 'العربية', dir: 'rtl', quranTranslation: 'ar.alafasy', flag: '🇸🇦' },
+  { code: 'ar', name: 'Arabic', nativeName: 'العربية', dir: 'rtl', quranTranslation: 'ar.alafasy', flag: '🇦🇪' },
   { code: 'en', name: 'English', nativeName: 'English', dir: 'ltr', quranTranslation: 'en.sahih', flag: '🇬🇧' },
   { code: 'fr', name: 'French', nativeName: 'Français', dir: 'ltr', quranTranslation: 'fr.hamidullah', flag: '🇫🇷' },
   { code: 'ur', name: 'Urdu', nativeName: 'اردو', dir: 'rtl', quranTranslation: 'ur.jalandhry', flag: '🇵🇰' },
